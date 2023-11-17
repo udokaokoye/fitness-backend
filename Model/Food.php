@@ -28,10 +28,12 @@ class Food
             $this->conn->beginTransaction();
             $nutritionId = $this->logNutrition($nutrition);
 
+            // return $nutritionId;
+
             if ($nutritionId) {
                 $query = "INSERT INTO `food` (`userId`, `name`, `apiFoodID`, `nutritionID`, `calories`, `serving`, `meal`, `note`, `created_at`) VALUES (?,?,?,?,?,?,?,?,?)";
                 $stmt = $this->conn->prepare($query);
-                $executeSuccess = $stmt->execute([$food['userID'], $food['name'], $food['apiFoodID'], $nutritionId, $food['calories'], $food['serving'], $food['meal'], $food['note'], $food['created_at']]);
+                $executeSuccess = $stmt->execute([$food['userId'], $food['name'], $food['apiFoodID'], $nutritionId, $food['calories'], $food['serving'], $food['meal'], $food['notes'], $food['created_at']]);
                 if ($executeSuccess) {
                     $this->conn->commit();
                     return true;
@@ -39,12 +41,12 @@ class Food
             } else {
                 $this->conn->rollBack();
                 echo ResponseHandler::sendResponse(500, "Failed To Add Nutrition");
-                return;
+                die();
             }
         } catch (PDOException $e) {
             $this->conn->rollBack();
             echo ResponseHandler::sendResponse(500, $e->getMessage());
-            return;
+            die();
         }
     }
 
@@ -64,7 +66,53 @@ class Food
         } catch (PDOException $e) {
             $this->conn->rollBack();
             echo ResponseHandler::sendResponse(500, $e->getMessage());
-            return false;
+            die();
+        }
+    }
+
+
+    public function getUsersMealHistory($userID)
+    {
+        try {
+            $query = "SELECT food.*, n.fat, u.firstName FROM food JOIN nutrition n ON food.nutritionID = n.id JOIN users u ON food.userId = u.id  WHERE food.userId = ?";
+
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([$userID]);
+
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+
+            if ($result) {
+                return $result;
+            } else {
+                return null;
+            }
+        } catch (PDOException $e) {
+            echo ResponseHandler::sendResponse(500, $e->getMessage());
+        }
+    }
+
+
+    public function getdem($userID, $beginningOfDay, $endOfDay)
+    {
+        try {
+            $query = "SELECT food.*, n.* FROM food JOIN nutrition n ON food.nutritionID = n.id JOIN users u ON food.userId = u.id  WHERE food.created_at BETWEEN '$beginningOfDay' AND '$endOfDay' AND food.userId = ?  ";
+
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([$userID]);
+
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+
+            if ($result) {
+                return $result;
+            } else {
+                return null;
+            }
+        } catch (PDOException $e) {
+            echo ResponseHandler::sendResponse(500, $e->getMessage());
         }
     }
 }
