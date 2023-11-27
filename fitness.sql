@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Nov 10, 2023 at 03:34 PM
--- Server version: 10.4.27-MariaDB
--- PHP Version: 8.0.25
+-- Host: 127.0.0.1
+-- Generation Time: Nov 27, 2023 at 08:31 PM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -37,7 +37,7 @@ CREATE TABLE `food` (
   `serving` varchar(50) NOT NULL,
   `meal` varchar(10) NOT NULL,
   `note` text NOT NULL,
-  `created_at` datetime NOT NULL
+  `created_at` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -45,10 +45,11 @@ CREATE TABLE `food` (
 --
 
 INSERT INTO `food` (`id`, `userId`, `name`, `apiFoodID`, `nutritionID`, `calories`, `serving`, `meal`, `note`, `created_at`) VALUES
-(1, 4, 'sods', 'sods', 20, 'dsfs', 'sdfsd', 'pdf', 'pdf', '2023-11-09 17:25:05'),
-(2, 4, 'Apple', 'A12345', 21, '95', '1', 'Breakfast', 'Fresh green apple', '2023-11-09 08:00:00'),
-(3, 3, 'Apple', 'A12345', 22, '95', '1', 'Breakfast', 'Fresh green apple', '2023-11-09 08:00:00'),
-(5, 3, 'Apple', 'A12345', 25, '95', '1', 'Breakfast', 'Fresh green apple', '2023-11-09 08:00:00');
+(12, 6, 'Beef Top Sirloin (Trimmed to 1/8\" Fat)', '37657', 40, '171', '3', 'B', 'No notes', 1699900187),
+(13, 6, 'Lettuce Salad with Egg, Cheese, Tomato, and/or Carrots', '6393', 41, '369', '3', 'L', 'No notes', 1699901475),
+(14, 6, 'Waves Fuego', '58125250', 42, '300', '2', 'L', 'No notes', 1699903027),
+(15, 6, 'Grilled Chicken', '448901', 43, '588', '4', 'L', 'No notes', 1699903049),
+(16, 6, 'Malta', '3183136', 44, '140', '1', 'L', 'No notes', 1699903728);
 
 -- --------------------------------------------------------
 
@@ -62,7 +63,7 @@ CREATE TABLE `nutrition` (
   `protein` varchar(50) NOT NULL,
   `carbohydrate` varchar(50) NOT NULL,
   `fat` varchar(50) NOT NULL,
-  `created_at` datetime NOT NULL
+  `created_at` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -70,10 +71,11 @@ CREATE TABLE `nutrition` (
 --
 
 INSERT INTO `nutrition` (`id`, `userId`, `protein`, `carbohydrate`, `fat`, `created_at`) VALUES
-(20, 4, 'sd', 'sd', 'sd', '2023-11-09 17:38:50'),
-(21, 4, '0.5', '25', '0.3', '2023-11-09 08:00:00'),
-(22, 3, '0.5', '25', '0.3', '2023-11-09 08:00:00'),
-(25, 3, '0.5', '25', '0.3', '2023-11-09 08:00:00');
+(40, 6, '15', '1', '9', 1699900187),
+(41, 6, '21', '21', '21', 1699901475),
+(42, 6, '4', '34', '16', 1699903027),
+(43, 6, '64', '0', '32', 1699903049),
+(44, 6, '2', '34', '0', 1699903728);
 
 -- --------------------------------------------------------
 
@@ -86,20 +88,19 @@ CREATE TABLE `users` (
   `firstName` varchar(500) NOT NULL,
   `lastName` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
+  `password` text NOT NULL,
   `avatar` text DEFAULT NULL,
   `caloriesGoal` text NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+  `created_at` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `firstName`, `lastName`, `email`, `avatar`, `caloriesGoal`, `created_at`) VALUES
-(1, ' cvbcvb', '', 'cvbcv', NULL, 'bcvbc', '2023-11-04 21:48:29'),
-(2, ' cvbcvb', '', 'cvbcv', NULL, 'bcvbc', '2023-11-04 21:49:06'),
-(3, 'Levi', '', 'leviokoye@gmail.com', NULL, '2000', '2023-11-09 11:18:53'),
-(4, 'Levi', 'Levi', 'leviokoye@gmail.com', NULL, '2000', '2023-11-09 11:21:39');
+INSERT INTO `users` (`id`, `firstName`, `lastName`, `email`, `password`, `avatar`, `caloriesGoal`, `created_at`) VALUES
+(6, 'Udoka', 'Okoye', 'leviokoye@gmail.com', '$2y$10$j0mvRje29lMbk2xZKbvk1eHhfUYpuKZZXLP7D8vaew1gRWrBhbfVK', NULL, '2500', 1699592400),
+(21, 'sdfsd', 'fsdfs', 'leviokoye@gmail.com1', '$2y$10$/6lev3S/jv3lQQrSnAF79uQ6qgWftzQP0xjq16ZCXJEJT1b36lX/S', NULL, '2000', 123456);
 
 --
 -- Indexes for dumped tables
@@ -124,7 +125,8 @@ ALTER TABLE `nutrition`
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -134,19 +136,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `food`
 --
 ALTER TABLE `food`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `nutrition`
 --
 ALTER TABLE `nutrition`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- Constraints for dumped tables
@@ -157,13 +159,13 @@ ALTER TABLE `users`
 --
 ALTER TABLE `food`
   ADD CONSTRAINT `fk_food_nutrition_id` FOREIGN KEY (`nutritionID`) REFERENCES `nutrition` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_food_user_id` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_food_user_id` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `nutrition`
 --
 ALTER TABLE `nutrition`
-  ADD CONSTRAINT `fk_nutrition_user_id` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_nutrition_user_id` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
