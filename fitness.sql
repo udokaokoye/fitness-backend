@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Nov 27, 2023 at 08:31 PM
+-- Host: localhost
+-- Generation Time: Dec 04, 2023 at 11:51 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -49,7 +49,14 @@ INSERT INTO `food` (`id`, `userId`, `name`, `apiFoodID`, `nutritionID`, `calorie
 (13, 6, 'Lettuce Salad with Egg, Cheese, Tomato, and/or Carrots', '6393', 41, '369', '3', 'L', 'No notes', 1699901475),
 (14, 6, 'Waves Fuego', '58125250', 42, '300', '2', 'L', 'No notes', 1699903027),
 (15, 6, 'Grilled Chicken', '448901', 43, '588', '4', 'L', 'No notes', 1699903049),
-(16, 6, 'Malta', '3183136', 44, '140', '1', 'L', 'No notes', 1699903728);
+(16, 6, 'Malta', '3183136', 44, '140', '1', 'L', 'No notes', 1699903728),
+(17, 6, 'Mountain Dew (16.9 oz)', '2142754', 45, '240', '1', 'L', '', 1701394343),
+(18, 6, 'Malta (12 oz)', '5761561', 46, '230', '1', 'L', '', 1701397094),
+(19, 6, 'Milk Chocolate Covered Almonds', '71200076', 47, '160', '1', 'D', '', 1701404430),
+(20, 6, 'Cheese Traditional Crust Pizza (Large)', '64933', 48, '420', '2', 'L', '', 1701404456),
+(21, 6, 'Pepsi', '76090', 49, '300', '3', 'L', 'Lunch', 1701405394),
+(22, 6, 'Purified Water', '3249144', 50, '0', '3', 'L', '', 1701405433),
+(23, 6, 'Chicken Breast', '1641', 51, '585', '3', 'L', '', 1701729016);
 
 -- --------------------------------------------------------
 
@@ -75,7 +82,14 @@ INSERT INTO `nutrition` (`id`, `userId`, `protein`, `carbohydrate`, `fat`, `crea
 (41, 6, '21', '21', '21', 1699901475),
 (42, 6, '4', '34', '16', 1699903027),
 (43, 6, '64', '0', '32', 1699903049),
-(44, 6, '2', '34', '0', 1699903728);
+(44, 6, '2', '34', '0', 1699903728),
+(45, 6, '0', '65', '0', 1701394343),
+(46, 6, '1', '56', '0', 1701397094),
+(47, 6, '3', '16', '10', 1701404430),
+(48, 6, '18', '40', '20', 1701404456),
+(49, 6, '0', '84', '0', 1701405394),
+(50, 6, '0', '0', '0', 1701405433),
+(51, 6, '87', '0', '21', 1701729016);
 
 -- --------------------------------------------------------
 
@@ -101,6 +115,36 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `firstName`, `lastName`, `email`, `password`, `avatar`, `caloriesGoal`, `created_at`) VALUES
 (6, 'Udoka', 'Okoye', 'leviokoye@gmail.com', '$2y$10$j0mvRje29lMbk2xZKbvk1eHhfUYpuKZZXLP7D8vaew1gRWrBhbfVK', NULL, '2500', 1699592400),
 (21, 'sdfsd', 'fsdfs', 'leviokoye@gmail.com1', '$2y$10$/6lev3S/jv3lQQrSnAF79uQ6qgWftzQP0xjq16ZCXJEJT1b36lX/S', NULL, '2000', 123456);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_profile`
+--
+
+CREATE TABLE `user_profile` (
+  `user_id` int(11) NOT NULL,
+  `weight` decimal(10,0) NOT NULL,
+  `height` decimal(10,0) NOT NULL,
+  `activity_level` enum('Sedentary','Lightly Active','Active','Very Active') NOT NULL,
+  `goal_weight` decimal(10,0) NOT NULL,
+  `dietary_preferences` varchar(255) NOT NULL,
+  `favorite_foods` text NOT NULL,
+  `disliked_foods` text NOT NULL,
+  `updated_at` bigint(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `weight_tracking`
+--
+
+CREATE TABLE `weight_tracking` (
+  `user_id` int(11) NOT NULL,
+  `weight` decimal(10,0) NOT NULL,
+  `date` bigint(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables
@@ -129,6 +173,18 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `email` (`email`);
 
 --
+-- Indexes for table `user_profile`
+--
+ALTER TABLE `user_profile`
+  ADD PRIMARY KEY (`user_id`);
+
+--
+-- Indexes for table `weight_tracking`
+--
+ALTER TABLE `weight_tracking`
+  ADD PRIMARY KEY (`user_id`,`date`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -136,19 +192,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `food`
 --
 ALTER TABLE `food`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `nutrition`
 --
 ALTER TABLE `nutrition`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- Constraints for dumped tables
@@ -166,6 +222,18 @@ ALTER TABLE `food`
 --
 ALTER TABLE `nutrition`
   ADD CONSTRAINT `fk_nutrition_user_id` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `user_profile`
+--
+ALTER TABLE `user_profile`
+  ADD CONSTRAINT `user_id_FK` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `weight_tracking`
+--
+ALTER TABLE `weight_tracking`
+  ADD CONSTRAINT `user_id_FK_weight_tracking` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
