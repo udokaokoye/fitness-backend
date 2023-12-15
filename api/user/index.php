@@ -26,6 +26,8 @@ if ($method == 'POST') {
    } 
 
    return;
+} else if($method == 'GET') {
+   echo 'GET request';
 } else {
     ResponseHandler::sendResponse(401, 'UN AUTHORIZED');
 }

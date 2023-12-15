@@ -19,19 +19,18 @@ class User
     }
 
 
-    // public function createUser($userObject) {
-    //     try {
-    //         // $query = 
-    //         $query = 'INSERT INTO users (`FirstName`, `lastName`, `email`, `caloriesGoal`) VALUES (?, ?, ?, ?)';
-    //         $stmt = $this->conn->prepare($query);
-    //         $stmt->execute([$userObject['name'], $userObject['name'], $userObject['email'], $userObject['caloriesGoal']]);
-    //         if ($stmt) {
-    //             return $stmt;
-    //         }
-    //     } catch (PDOException $e) {
-    //         echo ResponseHandler::sendResponse(500, $e->getMessage());
-    //         return;
-    //     }
-    // }
+public function getUser($email, $id, $method) {
+
+    if ($method == 'id') {
+        $query = "SELECT * FROM `users` JOIN user_profile up ON up.user_id = users.id WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result;
+    } else {
+        return null;
+    }
+
+}
 
 }

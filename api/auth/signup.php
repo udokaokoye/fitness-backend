@@ -37,6 +37,7 @@ try {
     $database = new Database();
     $db = $database->connect();
     $auth = new Auth($db);
+    $user = new User($db);
     $password = $_POST['password'];
 
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
@@ -44,7 +45,14 @@ try {
     $result = $auth->addUser($_POST, $hashedPassword);
 
     if ($result) {
-        ResponseHandler::sendResponse(201, "User Created", $result);
+        $userDetails = $user->getUser($_POST['email'], $result, 'id');
+        if ($userDetails) {
+            // $userDetails['token'] = $auth->generateToken($userDetails);
+            $result = $userDetails;
+            ResponseHandler::sendResponse(201, "User Created", $userDetails);
+        } else {
+            ResponseHandler::sendResponse(500, "Unable to get user details after signup but User Was Succefully Created, please try to login");
+        }
     } else {
         ResponseHandler::sendResponse(500, 'Unable to add user at this time');
     }

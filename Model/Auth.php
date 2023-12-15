@@ -47,9 +47,9 @@ class Auth
     }
 
     public function populateUserProfile($user, $userId) {
-        $query = "INSERT INTO `user_profile` (`user_id`, `age`, `gender`, `weight`, `height`, `activity_level`, `daily_calories`, `goal_weight`, `dietary_preferences`, `favorite_foods`, `disliked_foods`, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)";
+        $query = "INSERT INTO `user_profile` (`user_id`, `age`, `gender`, `weight`, `height`, `activity_level`, `daily_calories`, `goal_weight`, `dietary_preferences`, `favorite_foods`, `disliked_foods`, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
         $stmt = $this->conn->prepare($query);
-        $result = $stmt->execute([$userId, $user['age'], $user['gender'], $user['weight'], $user['height'], $user['activityLevel'], $user['daily_calories'], $user['goalWeight'], $user['dietaryPreferences'], $user['favoriteFoods'], $user['dislikedFoods'], (int)$user['createdAt']]);
+        $result = $stmt->execute([$userId, $user['age'], $user['gender'], $user['weight'], $user['height'], $user['activityLevel'], $user['dailyCalories'], $user['goalWeight'], $user['dietaryPreferences'], $user['favoriteFoods'], $user['dislikedFoods'], (int)$user['createdAt']]);
         if ($result) {
             $weightTrackerQuery = "INSERT INTO `weight_tracking` (`user_id`, `weight`, `date`) VALUES (?,?,?)";
             $weightTrackerStmt = $this->conn->prepare($weightTrackerQuery);
