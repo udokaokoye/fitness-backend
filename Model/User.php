@@ -19,18 +19,51 @@ class User
     }
 
 
-public function getUser($email, $id, $method) {
+    public function getUser($email, $id, $method)
+    {
 
-    if ($method == 'id') {
-        $query = "SELECT * FROM `users` JOIN user_profile up ON up.user_id = users.id WHERE id = ?";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute([$id]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result;
-    } else {
-        return null;
+        if ($method == 'id') {
+            $query = "SELECT * FROM `users` JOIN user_profile up ON up.user_id = users.id WHERE id = ?";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([$id]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result;
+        } else {
+            return null;
+        }
     }
 
-}
-
+    public function updateSingle($field, $value, $id)
+    {
+        try {
+            $query = "UPDATE `users` SET $field = ? WHERE id = ?";
+            $stmt = $this->conn->prepare($query);
+            $result = $stmt->execute([$value, $id]);
+            if ($result) {
+                return true;
+            } else {
+                return null;
+            }
+        } catch (PDOException $e) {
+            // check if error is due to invalid field name
+            if ($e->getCode() == '42S22') {
+                try {
+                    $query = "UPDATE `user_profile` SET $field = ? WHERE user_id = ?";
+                    $stmt = $this->conn->prepare($query);
+                    $result = $stmt->execute([$value, $id]);
+                    if ($result) {
+                        return $result;
+                    } else {
+                        return null;
+                    }
+                } catch (PDOException $e) {
+                    ResponseHandler::sendResponse(500, $e->getMessage());
+                    die();
+                }
+            } else {
+                ResponseHandler::sendResponse(500, $e->getMessage());
+                die();
+            }
+        }
+    }
 }
