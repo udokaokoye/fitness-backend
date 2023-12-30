@@ -13,16 +13,26 @@ if ($method == 'POST') {
     $field = $_POST['field'];
     $value = $_POST['value'];
     $id = $_POST['id'];
+    $updatedAt = $_POST['updatedAt'];
 
-    if ($field == '' || $value == '' || $id == '') {
+    if ($field == '' || $value == '' || $id == '' || $updatedAt == '') {
         ResponseHandler::sendResponse(400, "Please send all required fields");
         return;
     }
 
-    $result = $user->updateSingle($field, $value, $id);
+    $result = $user->updateSingle($field, $value, $id, $updatedAt);
 
     if ($result) {
-        ResponseHandler::sendResponse(200, "Updated", $result);
+        if ($field == 'weight') {
+            $weightTrackingResult = $user->updateWeightTracking($id, $value, $updatedAt);
+            if ($weightTrackingResult) {
+                ResponseHandler::sendResponse(200, "Updated", $result);
+            } else {
+                ResponseHandler::sendResponse(500, "Unable to update user");
+            }
+        } else {
+            ResponseHandler::sendResponse(200, "Updated", $result);
+        }
     } else {
         ResponseHandler::sendResponse(500, "Unable to update user");
     }

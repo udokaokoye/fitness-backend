@@ -33,12 +33,12 @@ class User
         }
     }
 
-    public function updateSingle($field, $value, $id)
+    public function updateSingle($field, $value, $id, $updatedAt)
     {
         try {
-            $query = "UPDATE `users` SET $field = ? WHERE id = ?";
+            $query = "UPDATE `users` SET $field = ?, `updated_at` = ? WHERE id = ?";
             $stmt = $this->conn->prepare($query);
-            $result = $stmt->execute([$value, $id]);
+            $result = $stmt->execute([$value, $updatedAt, $id]);
             if ($result) {
                 return true;
             } else {
@@ -48,9 +48,9 @@ class User
             // check if error is due to invalid field name
             if ($e->getCode() == '42S22') {
                 try {
-                    $query = "UPDATE `user_profile` SET $field = ? WHERE user_id = ?";
+                    $query = "UPDATE `user_profile` SET $field = ?, `updated_at` = ? WHERE user_id = ?";
                     $stmt = $this->conn->prepare($query);
-                    $result = $stmt->execute([$value, $id]);
+                    $result = $stmt->execute([$value, $updatedAt, $id]);
                     if ($result) {
                         return $result;
                     } else {
@@ -64,6 +64,22 @@ class User
                 ResponseHandler::sendResponse(500, $e->getMessage());
                 die();
             }
+        }
+    }
+
+    public function updateWeightTracking ($id, $weight, $updatedAt) {
+        try {
+            $query = "INSERT INTO `weight_tracking` (`user_id`, `weight`, `date`) VALUES (?, ?, ?)";
+            $stmt = $this->conn->prepare($query);
+            $result = $stmt->execute([$id, $weight, $updatedAt]);
+            if ($result) {
+                return true;
+            } else {
+                return null;
+            }
+        } catch (PDOException $e) {
+            ResponseHandler::sendResponse(500, $e->getMessage());
+            die();
         }
     }
 }
