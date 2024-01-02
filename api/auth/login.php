@@ -14,6 +14,7 @@ if ($method == 'POST') {
     $database = new Database();
     $db = $database->connect();
     $auth = new Auth($db);
+    $user = new User($db);
     $password = $_POST['password'];
 
     $result = $auth->getUserAuthInformation($_POST['email']);
@@ -21,7 +22,8 @@ if ($method == 'POST') {
         $hashedPassword = $result[0]['password'];
 
         if (password_verify($password, $hashedPassword)) {
-            ResponseHandler::sendResponse(200, 'logged in', $result[0]);
+            $userInfo = $user->getUser($_POST['email'], $result[0]['id'], 'id');
+            ResponseHandler::sendResponse(200, 'logged in', $userInfo);
             return;
         } else {
             ResponseHandler::sendResponse(401, "Wrong username/password");
