@@ -26,7 +26,29 @@ if ($method == 'GET') {
     } else {
         ResponseHandler::sendResponse(500, "Unable to retrieve fasts");
     }
-} else {
+} 
 
-    ResponseHandler::sendResponse(405, "Request Method Not Allowed");
+if ($method == 'POST') {
+    $database = new Database();
+    $db = $database->connect();
+    $fasting = new Fasting($db);
+
+   if (!isset($_POST['userId']) || !isset($_POST['fastingStart']) || !isset($_POST['fastingEnd'])) {
+        ResponseHandler::sendResponse(400, "Please send all required fields");
+        return;
+    }
+
+    $result = $fasting->logFast($_POST['userId'], $_POST['fastingStart'], $_POST['fastingEnd']);
+
+    if ($result) {
+        ResponseHandler::sendResponse(200, "Fast Logged");
+    } else {
+        ResponseHandler::sendResponse(500, "Unable to log fast");
+    }
+
+    if ($result) {
+        ResponseHandler::sendResponse(200, "Fast Logged", $result);
+    } else {
+        ResponseHandler::sendResponse(500, "Unable to log fast");
+    }
 }
