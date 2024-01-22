@@ -19,7 +19,7 @@ class Fasting
             $result = $stmt->execute([$user, $fastingStart, $fastingEnd]);
 
             if ($result) {
-                return $result;
+                return $this->conn->lastInsertId();
             } else {
                 return null;
             }
@@ -60,6 +60,24 @@ class Fasting
                 return null;
             }
         } catch (Exception $e) {
+            return ResponseHandler::sendResponse(500, $e->getMessage());
+            die();
+        }
+    }
+
+    public function endFast($fastingId, $endTime)
+    {
+        try {
+            $query = "UPDATE fasting SET completedTime = ?, completed = ? WHERE id = ?";
+            $stmt = $this->conn->prepare($query);
+            $result = $stmt->execute([$endTime, 1, $fastingId]);
+
+            if ($result) {
+                return $result;
+            } else {
+                return null;
+            }
+        } catch (PDOException $e) {
             return ResponseHandler::sendResponse(500, $e->getMessage());
             die();
         }

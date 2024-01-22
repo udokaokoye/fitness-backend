@@ -10,7 +10,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 if ($method == 'GET') {
     $userId = isset($_GET['userId']) ? $_GET['userId'] : null;
 
-    if ($userId) {
+    if (!$userId) {
         ResponseHandler::sendResponse(400, "Please send all required fields");
         return;
     }
@@ -22,12 +22,16 @@ if ($method == 'GET') {
     $result = $fasting->getFasts($userId);
 
     if ($result) {
+        if (isset($_GET['latest'])) {
+            $_GET['latest'] == 'true' ? $result = $result[count($result) - 1] : null;
+        }
         ResponseHandler::sendResponse(200, "Fasts Retrieved", $result);
     } else {
         ResponseHandler::sendResponse(500, "Unable to retrieve fasts");
     }
 } 
 
+// start Fast
 if ($method == 'POST') {
     $database = new Database();
     $db = $database->connect();
@@ -39,12 +43,6 @@ if ($method == 'POST') {
     }
 
     $result = $fasting->logFast($_POST['userId'], $_POST['fastingStart'], $_POST['fastingEnd']);
-
-    if ($result) {
-        ResponseHandler::sendResponse(200, "Fast Logged");
-    } else {
-        ResponseHandler::sendResponse(500, "Unable to log fast");
-    }
 
     if ($result) {
         ResponseHandler::sendResponse(200, "Fast Logged", $result);
